@@ -3,35 +3,40 @@ require 'rails_helper'
 RSpec.describe Task, type: :model do
   describe "validation" do
     it 'is valid with all attributes' do
-      task = FactoryBot.build(:task)
+      task = build(:task)
       task.valid?
       expect(task).to be_valid
+      expect(task.errors).to be_empty
     end
     
     it 'is invalid without title' do
-      task = FactoryBot.build(:task, title: nil)
-      task.valid?
-      expect(task.errors[:title]).to include("can't be blank")
+      task_without_title = build(:task, title: nil)
+      task_without_title.valid?
+      expect(task_without_title).to be_invalid
+      expect(task_without_title.errors[:title]).to include("can't be blank")
     end
 
     it 'is invalid without status' do
-      task = FactoryBot.build(:task, status: nil)
-      task.valid?
-      expect(task.errors[:status]).to include("can't be blank")
+      task_without_status = build(:task, status: nil)
+      task_without_status.valid?
+      expect(task_without_status).to be_invalid
+      expect(task_without_status.errors[:status]).to include("can't be blank")
     end
 
     it 'is invalid with a duplicate title' do
-      task1 = FactoryBot.create(:task)
-      task2 = FactoryBot.build(:task)
-      task2.valid?
-      expect(task2.errors[:title]).to include("has already been taken")
+      task = create(:task)
+      task_with_duplication_title = build(:task, title: task.title)
+      task_with_duplication_title.valid?
+      expect(task_with_duplication_title).to be_invalid
+      expect(task_with_duplication_title.errors[:title]).to include("has already been taken")
     end
 
     it 'is valid with another title' do
-      task1 = FactoryBot.create(:task)
-      task2 = FactoryBot.build(:task, title: 'hogehoge1')
-      task2.valid?
-      expect(task2).to be_valid
+      task = create(:task)
+      task_with_another_title = build(:task)
+      task_with_another_title.valid?
+      expect(task_with_another_title).to be_valid
+      expect(task_with_another_title.errors).to be_empty
     end
   end
 end
