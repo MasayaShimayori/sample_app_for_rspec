@@ -2,9 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Usersessions", type: :system do
   let(:user) { create(:user) }
-  before do
-    driven_by(:rack_test)
-  end
+
   describe 'ログイン前' do
     before do
       visit login_path
@@ -20,6 +18,8 @@ RSpec.describe "Usersessions", type: :system do
     end
     context 'フォームが未入力' do
       it 'ログイン処理が失敗する' do
+        fill_in 'Email', with: nil
+        fill_in 'Password', with: '123'
         click_button 'Login'
         expect(page).to have_content('Login failed'), 'フラッシュメッセージ「Login failed」が表示されません'
         expect(current_path).to eq(login_path), 'ログインページに戻りません'
